@@ -8,12 +8,18 @@ import android.widget.Toast
 import com.samng.youconverter.presenter.ConverterPresenter
 
 class ConverterActivity : AppCompatActivity(), ConverterView {
-    lateinit var presenter: ConverterPresenter
+    lateinit private var presenter: ConverterPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_converter)
+
+        presenter = ConverterPresenter(this)
+    }
+
+    override fun onResume() {
+        super.onResume()
 
         // Get intent, action and MIME type
         val intent = intent
@@ -24,14 +30,12 @@ class ConverterActivity : AppCompatActivity(), ConverterView {
         if (Intent.ACTION_SEND == action && type == "text/plain") {
             text = handleSendText(intent)
         }
-
-        presenter = ConverterPresenter(this)
         presenter.startPresenting(text)
     }
 
-    override fun onDestroy() {
+    override fun onPause() {
         presenter.stopPresenting()
-        super.onDestroy()
+        super.onPause()
     }
 
     override fun getContext(): Context {
