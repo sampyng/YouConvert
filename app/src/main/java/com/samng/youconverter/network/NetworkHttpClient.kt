@@ -1,13 +1,13 @@
 package com.samng.youconverter.network
 
+import android.content.Context
 import okhttp3.MediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
-import java.io.FileOutputStream
 import java.io.IOException
 
-class NetworkHttpClient : HttpClient {
+class NetworkHttpClient(val context: Context) : HttpClient {
     val client: OkHttpClient = OkHttpClient()
 
     override fun fetchDownloadLink(url: String): Response {
@@ -29,7 +29,7 @@ class NetworkHttpClient : HttpClient {
         if (!response.isSuccessful) {
             throw IOException("Failed to download file: " + response)
         }
-        val fos = FileOutputStream(filename)
+        val fos = context.openFileOutput(filename, Context.MODE_PRIVATE)
         fos.write(response.body()!!.bytes())
         fos.close()
     }
